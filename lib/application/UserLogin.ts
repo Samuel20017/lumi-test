@@ -1,4 +1,7 @@
-import { UnauthorizedException } from "@storyofams/next-api-decorators";
+import {
+  UnauthorizedException,
+  HttpException,
+} from "@storyofams/next-api-decorators";
 import { singleton } from "tsyringe";
 
 import UserEntity from "@domain/models/UserEntity";
@@ -10,29 +13,42 @@ import LoginIntentsRepository from "@domain/repository/LoginIntentsRepository";
 import IUserLoginWithEmailAndPasswordDto from "@application/requestsModels/IUserLoginWithEmailAndPasswordDto";
 import IAuthorizationDataDto from "@application/models/IAuthorizationDataDto";
 
-
 @singleton()
 class UserLogin {
-
   static JWT_TOKEN_EXPIRATION_HOURS = 7 * 24;
 
   constructor(
     private usersRepository: UsersRepository,
     private idsGenerationService: IdsGenerationServices,
-    private loginIntentsRepository: LoginIntentsRepository,
-  ) { }
+    private loginIntentsRepository: LoginIntentsRepository
+  ) {}
 
-  public async loginWithEmailAndPassword(request: IUserLoginWithEmailAndPasswordDto): Promise<IAuthorizationDataDto> {
+  public async loginWithEmailAndPassword(
+    request: IUserLoginWithEmailAndPasswordDto
+  ): Promise<IAuthorizationDataDto> {
     const user = await this.usersRepository.fetchByEmail(request.email);
+
     if (user === null) {
       throw new UnauthorizedException("Invalid Credentials");
     }
 
     const loginIntent = LoginIntentEntity.factory(
-      this.idsGenerationService.nextId(), {
-      user,
-      wasSuccess: false,
-    });
+      this.idsGenerationService.nextId(),
+      {
+        user,
+        wasSuccess: false,
+      }
+    );
+
+    const previousLoginIntents =
+      await this.loginIntentsRepository.fetchByUserIdAndCreatedAt(
+        user.id,
+        new Date(Date.now() - 1000 * 60 * 5)
+      );
+
+    if (previousLoginIntents.length >= 4) {
+      throw new HttpException(429, "Too many login attempts");
+    }
 
     const isPasswordValid = await user.validatePassword(request.password);
     if (!isPasswordValid) {
@@ -42,14 +58,17 @@ class UserLogin {
 
     loginIntent.setAsSuccess();
     await this.loginIntentsRepository.saveNew(loginIntent);
+
     return this.factoryAuthorizationData(user);
   }
 
   // Private Methods
-  
+
   private calculateTokenExpiration(user: UserEntity): Date {
     const expiration = new Date();
-    expiration.setHours(expiration.getHours() + UserLogin.JWT_TOKEN_EXPIRATION_HOURS);
+    expiration.setHours(
+      expiration.getHours() + UserLogin.JWT_TOKEN_EXPIRATION_HOURS
+    );
     return expiration;
   }
 
@@ -62,7 +81,6 @@ class UserLogin {
       personId: user.personId,
     };
   }
-
 }
 
 export default UserLogin;

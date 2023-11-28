@@ -20,29 +20,47 @@
     font-size: 1.2rem;
     padding: 1rem 1rem;
 }
-
-.headersButtons {
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    padding: 0.6rem 1rem 0.1rem 1rem;
-    height: 100%;
-}
-
-.searchBox {
-    display: flex;
-    gap: 1rem;
+.searchBox{
+    height: 50px;
+    width: 100%;
+    align-items: start;
     background-color: var(--paper-background-color);
-    padding: 0.4rem 1rem;
-    height: 3rem;
 }
 
-.searchBox>*:nth-child(1) {
+.containerSearch {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    height: 100%;
+    background-color: var(--paper-background-color);
+}
+
+.inputSearch {
     flex-grow: 1;
+    margin-right: 1rem;
+    width: 100%;
+    background-color: #f5f5f5;
+    border: 1px solid var(--paper-input-container-color);
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    transition: border-color 0.2s ease-in-out;
 }
 
-.searchBox>*:nth-child(2) {
-    min-width: 8rem;
+.searchButton {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    width: auto;
+    background-color: #34d399;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
 }
 
 .root > main {
@@ -53,4 +71,5 @@
 
 .table {
     height: 100%;
+    width: 100%;
 }

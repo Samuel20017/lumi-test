@@ -11,10 +11,10 @@ import LoginManager from "../LoginManager";
 import AppHeaderLayout from "../AppHeaderLayout";
 
 const LoginPage = () => {
-
   const router = useRouter();
   const { sessionState } = useAppState();
-  const { openNotificationModal, notificationModalProps } = useNotificationModal();
+  const { openNotificationModal, notificationModalProps } =
+    useNotificationModal();
 
   const goToHome = () => {
     if (!sessionState?.isLogin) return;
@@ -27,8 +27,9 @@ const LoginPage = () => {
       openNotificationModal({
         variant: "error",
         title: "Error",
-        description: "Lo sentimos no se pudo reconocer su tipo de usuario. Intenta iniciar sesión nuevamente.",
-        actionLabel: "Aceptar"
+        description:
+          "Lo sentimos no se pudo reconocer su tipo de usuario. Intenta iniciar sesión nuevamente.",
+        actionLabel: "Aceptar",
       });
     }
   };
@@ -39,14 +40,29 @@ const LoginPage = () => {
   }, [sessionState]);
 
   const onLoginFail = () => {
-    // TODO: Implement
+    openNotificationModal({
+      variant: "error",
+      title: "Credenciales incorrectas",
+      description:
+        "El correo electrónico o la contraseña que ingresaste no son correctos.",
+    });
+  };
+
+  const onToMannyAttempts = () => {
+    openNotificationModal({
+      variant: "error",
+      title: "Demasiados intentos",
+      description:
+        "Lo sentimos, has realizado demasiados intentos. Intenta más tarde.",
+    });
   };
 
   const onError = () => {
     openNotificationModal({
       variant: "error",
       title: "Error inesperado",
-      description: "Lo sentimos ha currido un error inesperado en nuestros servicios",
+      description:
+        "Lo sentimos ha currido un error inesperado en nuestros servicios",
     });
   };
 
@@ -55,15 +71,16 @@ const LoginPage = () => {
       <SplitPageLayout>
         <LoginPageDecorationSection />
         <div className={styles.formSection}>
-          <LoginManager 
-            onLoginFail={onLoginFail} 
-            onError={onError} 
+          <LoginManager
+            onLoginFail={onLoginFail}
+            onError={onError}
+            onToMannyAttempts={onToMannyAttempts}
           />
         </div>
       </SplitPageLayout>
       <NotificationModal {...notificationModalProps} />
     </AppHeaderLayout>
   );
-}
+};
 
 export default LoginPage;

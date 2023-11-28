@@ -7,39 +7,51 @@ import { dummyPersons } from "./dummyPersons";
 import PersonDbmMapper from "@infrastructure/cosmosDbmMappers/PersonDbmMapper";
 import { delay } from "../dummyRepositoryUtils";
 
-
 @singleton()
 export default class PersonsRepositoryImplementation extends PersonsRepository {
-
   constructor(
     private keywordsServices: KeywordsServices,
-    private personDbmMapper: PersonDbmMapper,
+    private personDbmMapper: PersonDbmMapper
   ) {
     super();
   }
 
   override async fetchById(id: string): Promise<PersonEntity | null> {
     await delay(200);
-    const dbm = this.items().find(x => x.id === id) ?? null;
+    const dbm = this.items().find((x) => x.id === id) ?? null;
     return dbm && this.personDbmMapper.dbmToEntity(dbm);
   }
 
-  override async fetchByEmploymentInfoKeyWords(searchString: string): Promise<PersonEntity[] | null> {
+  override async fetchByEmploymentInfoKeyWords(
+    searchString: string
+  ): Promise<PersonEntity[] | null> {
     await delay(1500);
-    const searchKeyWords = this.keywordsServices.extractKeyWordsFromString(searchString);
-    const searchKeyWordsSplit = this.keywordsServices.keyWordsToArray(searchKeyWords);
+    const searchKeyWords =
+      this.keywordsServices.extractKeyWordsFromString(searchString);
+    const searchKeyWordsSplit =
+      this.keywordsServices.keyWordsToArray(searchKeyWords);
+    console.log("-----");
 
     if (searchKeyWordsSplit.length == 0) return null;
 
-    let dbms = this.items()
-      .filter(x => x.employmentInfo?.keyWords && searchKeyWordsSplit.every(keyword => x.employmentInfo?.keyWords && x.employmentInfo?.keyWords.includes(keyword)));
+    let dbms = this.items().filter(
+      (x) =>
+        x.employmentInfo?.keyWords &&
+        searchKeyWordsSplit.every(
+          (keyword) =>
+            x.employmentInfo?.keyWords &&
+            x.employmentInfo?.keyWords.includes(keyword)
+        )
+    );
 
-    return dbms.map(x => this.personDbmMapper.dbmToEntity(x));
+    return dbms.map((x) => this.personDbmMapper.dbmToEntity(x));
   }
 
   override async fetchAllWithEmploymentInfo(): Promise<PersonEntity[]> {
     await delay(500);
-    return this.items().filter(x => !!x.employmentInfo).map(x => this.personDbmMapper.dbmToEntity(x));
+    return this.items()
+      .filter((x) => !!x.employmentInfo)
+      .map((x) => this.personDbmMapper.dbmToEntity(x));
   }
 
   // Private Methods
@@ -47,5 +59,4 @@ export default class PersonsRepositoryImplementation extends PersonsRepository {
   private items() {
     return dummyPersons as IPersonDbm[];
   }
-
 }

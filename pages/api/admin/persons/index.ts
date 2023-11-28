@@ -1,0 +1,2 @@
+import StudentPersonKeyWordsController from "@presentation/nextApiHandlers/AdminPersonKeyWordsController";
+export default StudentPersonKeyWordsController;
