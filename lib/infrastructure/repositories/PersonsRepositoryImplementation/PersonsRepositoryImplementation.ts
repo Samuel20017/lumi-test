@@ -30,7 +30,6 @@ export default class PersonsRepositoryImplementation extends PersonsRepository {
       this.keywordsServices.extractKeyWordsFromString(searchString);
     const searchKeyWordsSplit =
       this.keywordsServices.keyWordsToArray(searchKeyWords);
-    console.log("-----");
 
     if (searchKeyWordsSplit.length == 0) return null;
 

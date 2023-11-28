@@ -33,7 +33,7 @@ export default class AdminGetPersonData {
     searchString: string,
     authInfo?: IAuthorizationDataDto
   ): Promise<IPersonDto[] | null> {
-    if (authInfo === undefined || !authInfo.roles.includes(UserRole.Student)) {
+    if (authInfo === undefined || authInfo.roles.includes(UserRole.Student)) {
       throw new UnauthorizedException("Allowed for Admin Only");
     }
 

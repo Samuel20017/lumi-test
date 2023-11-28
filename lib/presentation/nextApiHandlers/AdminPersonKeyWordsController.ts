@@ -26,15 +26,13 @@ class StudentPersonKeyWordsController {
     @AuthInfo() authInfo?: IAuthorizationDataDto
   ) {
     if (!keyWords) {
-      throw new BadRequestException("keyWords si required");
+      throw new BadRequestException("keyWords is required");
     }
 
     const result = await this.searchServices.getPersonsByEmploymentInfoKeyWords(
       keyWords,
       authInfo
     );
-
-    console.log(result);
 
     return result;
   }

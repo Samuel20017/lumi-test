@@ -19,6 +19,7 @@ export interface ITableColumn<T extends ITableRow> {
 export interface ITableCellIndex<T extends ITableRow> {
   rowId?: string;
   columnAccessor?: keyof T;
+  rowOriginal?: any;
 }
 
 export interface ITableHighlightedRow {
@@ -146,6 +147,7 @@ function Table<T extends ITableRow>(props: ITableProps<T>) {
                       onCellClick({
                         rowId: (row.original as ITableRow).id,
                         columnAccessor: props.columns[j].accessor,
+                        rowOriginal: row.original,
                       })
                     }
                     style={{
